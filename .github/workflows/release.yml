@@ -1,0 +1,48 @@
+name: Build and Release WinForms App (.NET Framework)
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    # Устанавливаем Visual Studio и MSBuild
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.1
+    
+    # Восстанавливаем NuGet пакеты
+    - name: Restore NuGet packages
+      run: nuget restore FractionTraining.sln
+      # Замените YourSolution.sln на имя вашего файла решения
+    
+    # Собираем проект
+    - name: Build project
+      run: msbuild FractionTraining.sln /p:Configuration=Release /p:Platform="Any CPU"
+      # Замените YourSolution.sln на имя вашего файла решения
+    
+    # Подготавливаем файлы для релиза
+    - name: Prepare files for release
+      run: |
+        mkdir publish
+        # Путь к собранному приложению (замените YourWinFormsApp на имя вашего проекта)
+        Copy-Item -Path "FractionTraining\bin\Release\*" -Destination publish -Recurse
+        Compress-Archive -Path "publish\*" -DestinationPath "MyApp.zip"
+      shell: powershell
+    
+    # Создаем релиз и загружаем архив
+    - name: Create Release and Upload Asset
+      uses: softprops/action-gh-release@v2
+      with:
+        files: MyApp.zip
+        draft: false
+        prerelease: false
