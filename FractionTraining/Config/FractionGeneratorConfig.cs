@@ -7,6 +7,6 @@
         public int MinDenominator { get; set;} = 2;
         public int MaxDenominator { get; set; } = 10;
         public int MinMultiplier { get; set; } = 3;
-        public int MaxMultiplier { get; set; } = 12;
+        public int MaxMultiplier { get; set; } = 11;
     }
 }
