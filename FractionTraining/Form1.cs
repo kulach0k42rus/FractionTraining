@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 
 namespace FractionTraining
 {
@@ -97,7 +95,6 @@ namespace FractionTraining
             {
                 ShowErrorMessage();
             }
-
         }
 
         private void num_tb_KeyPress(object sender, KeyPressEventArgs e)
