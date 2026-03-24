@@ -19,32 +19,15 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.1
     
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.2.0
-    
     - name: Restore NuGet packages
       run: nuget restore FractionTraining.sln
     
     - name: Build project
       run: msbuild FractionTraining.sln /p:Configuration=Release /p:Platform="Any CPU"
     
-    - name: Package EXE only
-      run: |
-        $exePath = "FractionTraining\bin\Release\FractionTraining.exe"
-        
-        if (Test-Path $exePath) {
-            Write-Host "✅ EXE found at: $exePath"
-            Compress-Archive -Path $exePath -DestinationPath "FractionTraining.zip" -Force
-            Write-Host "✅ Archive created with only EXE file"
-        } else {
-            Write-Host "❌ ERROR: EXE not found at $exePath"
-            exit 1
-        }
-      shell: powershell
-    
-    - name: Upload to Release
+    - name: Upload EXE directly
       uses: softprops/action-gh-release@v2
       with:
-        files: FractionTraining.zip
+        files: FractionTraining\bin\Release\FractionTraining.exe
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
