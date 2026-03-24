@@ -28,20 +28,16 @@ jobs:
     - name: Build project
       run: msbuild FractionTraining.sln /p:Configuration=Release /p:Platform="Any CPU"
     
-    - name: Package EXE
+    - name: Package EXE only
       run: |
-        # Путь к папке с собранным приложением (из логов сборки)
-        $sourcePath = "FractionTraining\bin\Release"
+        $exePath = "FractionTraining\bin\Release\FractionTraining.exe"
         
-        if (Test-Path $sourcePath) {
-            Write-Host "Found files in: $sourcePath"
-            Get-ChildItem $sourcePath
-            
-            # Создаем архив
-            Compress-Archive -Path "$sourcePath\*" -DestinationPath "FractionTraining.zip" -Force
-            Write-Host "Archive created successfully!"
+        if (Test-Path $exePath) {
+            Write-Host "✅ EXE found at: $exePath"
+            Compress-Archive -Path $exePath -DestinationPath "FractionTraining.zip" -Force
+            Write-Host "✅ Archive created with only EXE file"
         } else {
-            Write-Host "ERROR: Path not found: $sourcePath"
+            Write-Host "❌ ERROR: EXE not found at $exePath"
             exit 1
         }
       shell: powershell
