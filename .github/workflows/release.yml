@@ -1,4 +1,4 @@
-name: Build and Release WinForms App (.NET Framework)
+name: Build and Release WinForms App
 
 on:
   push:
@@ -16,33 +16,39 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     
-    # Устанавливаем Visual Studio и MSBuild
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.1
     
-    # Восстанавливаем NuGet пакеты
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.2.0
+    
     - name: Restore NuGet packages
       run: nuget restore FractionTraining.sln
-      # Замените YourSolution.sln на имя вашего файла решения
     
-    # Собираем проект
     - name: Build project
       run: msbuild FractionTraining.sln /p:Configuration=Release /p:Platform="Any CPU"
-      # Замените YourSolution.sln на имя вашего файла решения
     
-    # Подготавливаем файлы для релиза
-    - name: Prepare files for release
+    - name: Package EXE
       run: |
-        mkdir publish
-        # Путь к собранному приложению (замените YourWinFormsApp на имя вашего проекта)
-        Copy-Item -Path "FractionTraining\bin\Release\*" -Destination publish -Recurse
-        Compress-Archive -Path "publish\*" -DestinationPath "MyApp.zip"
+        # Путь к папке с собранным приложением (из логов сборки)
+        $sourcePath = "FractionTraining\bin\Release"
+        
+        if (Test-Path $sourcePath) {
+            Write-Host "Found files in: $sourcePath"
+            Get-ChildItem $sourcePath
+            
+            # Создаем архив
+            Compress-Archive -Path "$sourcePath\*" -DestinationPath "FractionTraining.zip" -Force
+            Write-Host "Archive created successfully!"
+        } else {
+            Write-Host "ERROR: Path not found: $sourcePath"
+            exit 1
+        }
       shell: powershell
     
-    # Создаем релиз и загружаем архив
-    - name: Create Release and Upload Asset
+    - name: Upload to Release
       uses: softprops/action-gh-release@v2
       with:
-        files: MyApp.zip
-        draft: false
-        prerelease: false
+        files: FractionTraining.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
