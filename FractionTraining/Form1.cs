@@ -51,16 +51,13 @@ namespace FractionTraining
 
         private bool VerifyAnswer()
         {
-            var userNumerator = num_tb.Text;
-            var userDenomerator = denom_tb.Text;
-
-            if (userDenomerator == "1")
+            if (_currentFraction.SimplifiedDenomerator == 1)
             {
-                return userNumerator == _currentFraction.SimplifiedNumerator.ToString() && string.IsNullOrEmpty(userDenomerator);
+                return num_tb.Text == _currentFraction.SimplifiedNumerator.ToString() && string.IsNullOrEmpty(denom_tb.Text);
             }
             else 
             {
-                return userNumerator == _currentFraction.SimplifiedNumerator.ToString() && userDenomerator == _currentFraction.SimplifiedDenomerator.ToString();
+                return num_tb.Text == _currentFraction.SimplifiedNumerator.ToString() && denom_tb.Text == _currentFraction.SimplifiedDenomerator.ToString();
             }
         }
 
